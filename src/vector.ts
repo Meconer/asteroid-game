@@ -19,6 +19,7 @@ export default class Vector {
     const y = Math.sin(angle);
     return new Vector(x, y);
   };
+
   add(vectorToAdd: Vector): Vector {
     const resultVector = new Vector(
       this.x + vectorToAdd.x,

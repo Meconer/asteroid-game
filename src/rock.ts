@@ -3,11 +3,12 @@ import { GameObject } from "./gameobject";
 import Vector from "./vector";
 
 export class Rock extends GameObject {
-  rockSpeed = 0;
+  rockSpeed = 0.6;
   game: Game;
   markedForDeletion = false;
   heading = new Vector(1, 0);
   rockShapeNo = 3;
+  isHit = false;
 
   rockShapes = [
     [
@@ -155,7 +156,24 @@ export class Rock extends GameObject {
   }
 
   hit() {
-    console.log("Hit");
-    this.markedForDeletion = true;
+    this.isHit = true;
+  }
+
+  static createRocks(noOfRocks: number, game: Game): Rock[] {
+    const rocks: Rock[] = [];
+    for (let i = 0; i < noOfRocks; i++) {
+      const rock = new Rock(game);
+      rock.rockSpeed = 0.4 + 0.4 * Math.random();
+      rock.rockShapeNo = i;
+      rock.pos.x = 200 + 400 * (i % 2);
+      rock.pos.y = 200 + 200 * Math.floor((i / 2) % 2);
+
+      rock.heading = Vector.createUnityVectorFromAngle(Math.random() * 6.28);
+      rock.travelDirection = Vector.createUnityVectorFromAngle(
+        Math.random() * 6.28
+      );
+      rocks.push(rock);
+    }
+    return rocks;
   }
 }

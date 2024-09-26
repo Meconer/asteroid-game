@@ -15,15 +15,14 @@ export class Ship extends GameObject {
     super(game);
   }
 
-  shipShape = {
-    coords: [new Vector(-10, -8), new Vector(10, 0), new Vector(-10, 8)],
-    isClosed: true,
-  };
+  shipShape = [
+    new Vector(-10, -8),
+    new Vector(10, 0),
+    new Vector(-10, 8),
+    new Vector(-10, -8),
+  ];
 
-  flameShape = {
-    coords: [new Vector(-10, -3), new Vector(-14, 0), new Vector(-10, 3)],
-    isClosed: false,
-  };
+  flameShape = [new Vector(-10, -3), new Vector(-14, 0), new Vector(-10, 3)];
 
   stopAccelerate() {
     this.acceleration = 0;
@@ -37,22 +36,21 @@ export class Ship extends GameObject {
     this.game.context.strokeStyle = "#2eb229";
     this.game.context.lineWidth = 2;
     this.game.context.beginPath();
-    const drawingCoords = this.shipShape.coords.map((coord) =>
+    const drawingCoords = this.shipShape.map((coord) =>
       coord.rotateByVector(this.heading).add(this.pos)
     );
     this.game.context.moveTo(drawingCoords[0].x, drawingCoords[0].y);
-    for (let i = 1; i < this.shipShape.coords.length; i++) {
+    for (let i = 1; i < this.shipShape.length; i++) {
       this.game.context.lineTo(drawingCoords[i].x, drawingCoords[i].y);
     }
-    if (this.shipShape.isClosed) this.game.context.closePath();
     this.game.context.stroke();
     if (this.acceleration) {
-      const flameCoords = this.flameShape.coords.map((coord) =>
+      const flameCoords = this.flameShape.map((coord) =>
         coord.rotateByVector(this.heading).add(this.pos)
       );
       this.game.context.beginPath();
       this.game.context.moveTo(flameCoords[0].x, flameCoords[0].y);
-      for (let i = 1; i < this.flameShape.coords.length; i++) {
+      for (let i = 1; i < this.flameShape.length; i++) {
         this.game.context.lineTo(flameCoords[i].x, flameCoords[i].y);
       }
       this.game.context.stroke();
@@ -63,6 +61,7 @@ export class Ship extends GameObject {
   update() {
     this.handleKeys();
     this.move(this.travelDirection);
+    this.checkForRockHit();
     this.accelerate();
   }
 
@@ -128,12 +127,17 @@ export class Ship extends GameObject {
   turnRight() {
     this.heading = this.heading.rotateVector(this.turningSpeed);
   }
-
-  //   shoot() {
-  //     this.bullet = new Bullet(this.canvasWidth, this.canvasHeight);
-  //     this.bullet.pos = this.pos;
-  //     this.bullet.travelDirection = this.heading.scale(
-  //       this.bullet.bulletStartSpeed
-  //     );
-  //   }
+  checkForRockHit() {
+    this.game.rocks.forEach((rock) => {
+      this.shipShape.forEach((coord) => {
+        if (
+          rock.checkForPointInside(
+            coord.rotateByVector(this.heading).add(this.pos)
+          )
+        ) {
+          this.game.gameOver();
+        }
+      });
+    });
+  }
 }

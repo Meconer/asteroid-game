@@ -19,6 +19,7 @@ export class Game {
   rocks: Rock[] = [];
   noOfRocks = 4;
   gameCanvas: HTMLCanvasElement;
+  isGameOver = false;
 
   constructor(
     gameCanvas: HTMLCanvasElement,
@@ -32,7 +33,7 @@ export class Game {
 
   run() {
     this.ship = new Ship(this);
-    const newRocks = this.createRocks(this.noOfRocks);
+    const newRocks = Rock.createRocks(this.noOfRocks, this);
 
     this.rocks = newRocks;
     document.addEventListener("keydown", (ev: KeyboardEvent) => {
@@ -46,13 +47,7 @@ export class Game {
       const idx = this.keysDown.indexOf(key);
       if (idx >= 0) this.keysDown = this.keysDown.filter((k) => k != key);
     });
-    // For testing
-    // this.gameCanvas.addEventListener("click", (ev: MouseEvent) => {
-    //   const rect = this.gameCanvas.getBoundingClientRect();
-    //   const x = ev.clientX - rect.left;
-    //   const y = ev.clientY - rect.top;
-    //   console.log(this.rocks[0].checkForPointInside(new Vector(x, y)));
-    // });
+
     this.animate(0);
   }
 
@@ -66,13 +61,44 @@ export class Game {
       this.bullets.forEach((bullet) => {
         bullet.animate();
       });
+
+      const newRocks: Rock[] = [];
+      this.rocks.forEach((rock) => {
+        if (rock.isHit) {
+          rock.markedForDeletion = true;
+          if (rock.rockScale > 2) {
+            newRocks.push(...Rock.createRocks(2, this));
+            newRocks.forEach((newRock) => {
+              newRock.rockScale = rock.rockScale / 2;
+              newRock.pos.x = rock.pos.x;
+              newRock.pos.y = rock.pos.y;
+
+              newRock.travelDirection = Vector.createUnityVectorFromAngle(
+                Math.random() * 2 * Math.PI
+              );
+            });
+          }
+        }
+      });
+
       this.bullets = this.bullets.filter((bullet) => !bullet.markedForDeletion);
       this.rocks = this.rocks.filter((rock) => !rock.markedForDeletion);
+      this.rocks.push(...newRocks);
       this.prevTimestamp = timestamp;
     } else {
       timestamp += deltatime;
     }
-    requestAnimationFrame(this.animate);
+    if (!this.isGameOver) requestAnimationFrame(this.animate);
+    else {
+      this.context.fillStyle = "#2eb229";
+      this.context.font = "30px Arial";
+      this.context.textAlign = "center";
+      this.context.fillText(
+        "Game Over!",
+        this.canvasWidth / 2,
+        this.canvasHeight / 2
+      );
+    }
   };
 
   fireBullet(firingPosition: Vector, heading: Vector, travelDirection: Vector) {
@@ -88,20 +114,8 @@ export class Game {
       .add(travelDirection);
     this.bullets.push(bullet);
   }
-  createRocks(noOfRocks: number): Rock[] {
-    const rocks: Rock[] = [];
-    for (let i = 0; i < noOfRocks; i++) {
-      const rock = new Rock(this);
-      rock.rockShapeNo = i;
-      rock.pos.x = 200 + 400 * (i % 2);
-      rock.pos.y = 200 + 200 * Math.floor((i / 2) % 2);
 
-      rock.heading = Vector.createUnityVectorFromAngle(Math.random() * 6.28);
-      rock.travelDirection = Vector.createUnityVectorFromAngle(
-        Math.random() * 6.28
-      );
-      rocks.push(rock);
-    }
-    return rocks;
+  gameOver() {
+    this.isGameOver = true;
   }
 }
