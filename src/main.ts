@@ -16,10 +16,7 @@ window.addEventListener("load", () => {
     }
   }
 
-  const canvasWidth = gameCanvas.getBoundingClientRect().width;
-  const canvasHeight = gameCanvas.getBoundingClientRect().height;
-
-  const game = new Game(canvasWidth, canvasHeight, gameContext!);
+  const game = new Game(gameCanvas, gameContext!);
 
   game.run();
 });

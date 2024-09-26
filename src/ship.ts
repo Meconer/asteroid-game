@@ -62,7 +62,7 @@ export class Ship extends GameObject {
   lastTimestamp = 0;
   update() {
     this.handleKeys();
-    this.move(this.bulletDirection);
+    this.move(this.travelDirection);
     this.accelerate();
   }
 
@@ -82,7 +82,7 @@ export class Ship extends GameObject {
     // Shooting
     const jKey = this.game.keysDown.indexOf("j") >= 0;
     if (jKey)
-      this.game.fireBullet(this.pos, this.heading, this.bulletDirection);
+      this.game.fireBullet(this.pos, this.heading, this.travelDirection);
   }
 
   move(movement: Vector) {
@@ -105,18 +105,18 @@ export class Ship extends GameObject {
   }
 
   accelerate() {
-    const retardationVector = this.bulletDirection
+    const retardationVector = this.travelDirection
       .negate()
       .scale(this.retardationStep);
     const accelVector = this.heading.scale(this.acceleration);
-    const newTravelDirection = this.bulletDirection
+    const newTravelDirection = this.travelDirection
       .add(retardationVector)
       .add(accelVector);
 
     const speed = newTravelDirection.getAbsoluteValue();
-    if (speed < this.maxSpeed) this.bulletDirection = newTravelDirection;
+    if (speed < this.maxSpeed) this.travelDirection = newTravelDirection;
     else
-      this.bulletDirection = newTravelDirection
+      this.travelDirection = newTravelDirection
         .scale(1 / speed)
         .scale(this.maxSpeed);
   }

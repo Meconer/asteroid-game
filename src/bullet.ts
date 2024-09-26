@@ -27,7 +27,17 @@ export class Bullet extends GameObject {
   update() {
     const timestamp = Date.now();
     if (timestamp > this.timeToDeleteBullet) this.markedForDeletion = true;
-    this.move(this.bulletDirection);
+    this.move(this.travelDirection);
+    this.checkForRockHit();
+  }
+
+  checkForRockHit() {
+    this.game.rocks.forEach((rock) => {
+      if (rock.checkForPointInside(this.pos)) {
+        this.markedForDeletion = true;
+        rock.hit();
+      }
+    });
   }
 
   move(movement: Vector) {

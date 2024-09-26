@@ -14,6 +14,11 @@ export default class Vector {
     return new Vector(this.x * scaleFactor, this.y * scaleFactor);
   }
 
+  static createUnityVectorFromAngle = (angle: number): Vector => {
+    const x = Math.cos(angle);
+    const y = Math.sin(angle);
+    return new Vector(x, y);
+  };
   add(vectorToAdd: Vector): Vector {
     const resultVector = new Vector(
       this.x + vectorToAdd.x,
