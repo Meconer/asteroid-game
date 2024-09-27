@@ -1,22 +1,35 @@
-body {
+* {
   background-color: black;
+  color: #2eb229;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.gameElement {
+  position: absolute;
+  top: 50%;
+  left: 50%;
 }
 
 h1 {
-  color: #2eb229;
-  position: absolute;
-  top: 0px;
+  margin: 0;
+  transform: translate(-50%, -360px);
+}
+
+#gameScore {
+  top: 50%;
   margin: 0;
   left: 50%;
-  transform: translate(-50%);
+
+  transform: translate(-400px, -330px);
+}
+
+#gameStatus {
+  transform: translate(-50%, 300px);
 }
 
 #canvasContainer {
-  position: absolute;
   border: 2px solid #2eb229;
   width: 800px;
   height: 600px;
-  top: 50%;
-  left: 50%;
   transform: translate(-50%, -50%);
 }

@@ -6,10 +6,11 @@ export class Ship extends GameObject {
   acceleration = 0;
   accelerationStep = 0.01;
   retardationStep = 0.006;
-  maxSpeed = 4;
+  maxSpeed = 3;
   heading = new Vector(0, -1);
   turningSpeed: number = 2;
   turning: Turning = Turning.none;
+  hasFiredBullet = false;
 
   constructor(game: Game) {
     super(game);
@@ -74,14 +75,19 @@ export class Ship extends GameObject {
     if (!aKey && !dKey) this.turning = Turning.none;
 
     // Acceleration
-    const kKey = this.game.keysDown.indexOf("k") >= 0;
-    if (kKey) this.startAccelerate();
+    const jKey = this.game.keysDown.indexOf("j") >= 0;
+    if (jKey) this.startAccelerate();
     else this.stopAccelerate();
 
     // Shooting
-    const jKey = this.game.keysDown.indexOf("j") >= 0;
-    if (jKey)
+    const kKey = this.game.keysDown.indexOf("k") >= 0;
+    if (kKey && !this.hasFiredBullet) {
       this.game.fireBullet(this.pos, this.heading, this.travelDirection);
+      this.hasFiredBullet = true;
+    }
+    if (!kKey) {
+      this.hasFiredBullet = false;
+    }
   }
 
   move(movement: Vector) {
@@ -121,11 +127,11 @@ export class Ship extends GameObject {
   }
 
   turnLeft() {
-    this.heading = this.heading.rotateVector(-this.turningSpeed);
+    this.heading = this.heading.rotateByAngleInDegrees(-this.turningSpeed);
   }
 
   turnRight() {
-    this.heading = this.heading.rotateVector(this.turningSpeed);
+    this.heading = this.heading.rotateByAngleInDegrees(this.turningSpeed);
   }
   checkForRockHit() {
     this.game.rocks.forEach((rock) => {

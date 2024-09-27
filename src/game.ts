@@ -20,6 +20,9 @@ export class Game {
   noOfRocks = 4;
   gameCanvas: HTMLCanvasElement;
   isGameOver = false;
+  score = 0;
+  scoreElement: HTMLElement | null;
+  statusElement: HTMLElement | null;
 
   constructor(
     gameCanvas: HTMLCanvasElement,
@@ -28,6 +31,8 @@ export class Game {
     this.gameCanvas = gameCanvas;
     this.canvasWidth = gameCanvas.getBoundingClientRect().width;
     this.canvasHeight = gameCanvas.getBoundingClientRect().height;
+    this.scoreElement = document.getElementById("gameScore");
+    this.statusElement = document.getElementById("gameStatus");
     this.context = context;
   }
 
@@ -72,10 +77,10 @@ export class Game {
               newRock.rockScale = rock.rockScale / 2;
               newRock.pos.x = rock.pos.x;
               newRock.pos.y = rock.pos.y;
-
-              newRock.travelDirection = Vector.createUnityVectorFromAngle(
-                Math.random() * 2 * Math.PI
-              );
+              const randomRotAngle = -90 + Math.random() * 180;
+              const rotation =
+                rock.travelDirection.rotateByAngleInDegrees(randomRotAngle);
+              newRock.travelDirection = rotation;
             });
           }
         }
@@ -88,18 +93,17 @@ export class Game {
     } else {
       timestamp += deltatime;
     }
+
     if (!this.isGameOver) requestAnimationFrame(this.animate);
     else {
-      this.context.fillStyle = "#2eb229";
-      this.context.font = "30px Arial";
-      this.context.textAlign = "center";
-      this.context.fillText(
-        "Game Over!",
-        this.canvasWidth / 2,
-        this.canvasHeight / 2
-      );
+      this.statusElement!.innerText = "Game over";
     }
   };
+
+  updateScore(points: number) {
+    this.score += points;
+    this.scoreElement!.innerText = `Score ${this.score}`;
+  }
 
   fireBullet(firingPosition: Vector, heading: Vector, travelDirection: Vector) {
     const timestamp = Date.now();

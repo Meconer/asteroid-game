@@ -157,6 +157,20 @@ export class Rock extends GameObject {
 
   hit() {
     this.isHit = true;
+    this.game.updateScore(this.getScoreForRock());
+  }
+  getScoreForRock(): number {
+    switch (this.rockScale) {
+      case 2:
+        return 100;
+      case 4:
+        return 50;
+      case 8:
+        return 20;
+
+      default:
+        return 0;
+    }
   }
 
   static createRocks(noOfRocks: number, game: Game): Rock[] {

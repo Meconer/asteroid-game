@@ -3,7 +3,7 @@ import { GameObject } from "./gameobject";
 import Vector from "./vector";
 
 export class Bullet extends GameObject {
-  bulletStartSpeed = 3;
+  bulletStartSpeed = 4;
   game: Game;
   bulletLifeTime = 1500;
   timeToDeleteBullet = 0;

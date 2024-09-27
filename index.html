@@ -8,10 +8,12 @@
   </head>
   <body>
     <div>
-      <h1>Asteroid game</h1>
-      <div id="canvasContainer">
+      <h1 class="gameElement">Asteroid game</h1>
+      <h3 id="gameScore" class="gameElement">Score</h3>
+      <div id="canvasContainer" class="gameElement">
         <canvas id="gameCanvas" width="800" height="600"> </canvas>
       </div>
+      <h3 id="gameStatus" class="gameElement">Running</h3>
     </div>
 
     <script type="module" src="/src/main.ts"></script>

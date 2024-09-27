@@ -35,7 +35,7 @@ export default class Vector {
     return new Vector(x, y);
   };
 
-  rotateVector(rotationAngleInDegrees: number): Vector {
+  rotateByAngleInDegrees(rotationAngleInDegrees: number): Vector {
     const x =
       this.x * Math.cos((rotationAngleInDegrees * Math.PI) / 180) -
       this.y * Math.sin((rotationAngleInDegrees * Math.PI) / 180);
